@@ -39,68 +39,62 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowRight') isMovingRight = false;
     });
     
-    // Enhanced touch controls for mobile
-    let touchStartX = 0;
-    let touchStartTime = 0;
-    let touchMoved = false;
+    // Touch controls for direct basket dragging
+    let isDragging = false;
+    let initialX;
+    let initialBasketLeft;
     
     // Touch start handler
-    gameArea.addEventListener('touchstart', (e) => {
+    basket.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
-        touchStartX = touch.clientX;
-        touchStartTime = Date.now();
-        touchMoved = false;
-        
-        // Get basket position
-        const basketRect = basket.getBoundingClientRect();
-        const touchX = touch.clientX;
-        const basketCenter = basketRect.left + basketRect.width / 2;
-        
-        // Set movement based on touch position relative to basket
-        if (touchX < basketCenter) {
-            isMovingLeft = true;
-            isMovingRight = false;
-        } else {
-            isMovingRight = true;
-            isMovingLeft = false;
-        }
-        
+        isDragging = true;
+        initialX = touch.clientX;
+        initialBasketLeft = basket.offsetLeft;
+        e.stopPropagation();
         e.preventDefault();
     }, { passive: false });
     
-    // Touch move handler for smoother control
+    // Touch move handler - makes basket follow finger
     gameArea.addEventListener('touchmove', (e) => {
-        if (!touchMoved && e.touches.length > 0) {
-            const touch = e.touches[0];
-            const touchX = touch.clientX;
-            const moveX = touchX - touchStartX;
-            
-            // Only register as a move if finger has moved significantly
-            if (Math.abs(moveX) > 10) {
-                touchMoved = true;
-                
-                // Update basket position directly based on touch position
-                const gameAreaRect = gameArea.getBoundingClientRect();
-                const basketWidth = basket.offsetWidth;
-                let newPosition = ((touchX - gameAreaRect.left - basketWidth/2) / (gameAreaRect.width - basketWidth)) * 100;
-                
-                // Keep basket within bounds
-                newPosition = Math.max(0, Math.min(100, newPosition));
-                basketPosition = newPosition;
-                basket.style.left = `${basketPosition}%`;
-            }
-        }
+        if (!isDragging) return;
+        
+        const touch = e.touches[0];
+        const deltaX = touch.clientX - initialX;
+        const newLeft = initialBasketLeft + deltaX;
+        const gameAreaRect = gameArea.getBoundingClientRect();
+        const basketWidth = basket.offsetWidth;
+        
+        // Calculate new position as percentage
+        let newPosition = ((newLeft - gameAreaRect.left) / (gameAreaRect.width - basketWidth)) * 100;
+        
+        // Keep basket within bounds
+        newPosition = Math.max(0, Math.min(100, newPosition));
+        
+        // Update basket position
+        basketPosition = newPosition;
+        basket.style.left = `${basketPosition}%`;
+        
         e.preventDefault();
     }, { passive: false });
     
     // Touch end handler
-    gameArea.addEventListener('touchend', () => {
-        isMovingLeft = false;
-        isMovingRight = false;
-        touchMoved = false;
+    document.addEventListener('touchend', () => {
+        isDragging = false;
     });
     
-    // Prevent scrolling on touch devices
+    // Cancel touch if user scrolls
+    document.addEventListener('touchcancel', () => {
+        isDragging = false;
+    });
+    
+    // Prevent scrolling when touching the game area
+    gameArea.addEventListener('touchmove', (e) => {
+        if (isDragging) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Prevent scrolling on touch devices when game is active
     document.addEventListener('touchmove', (e) => {
         if (isGameActive) {
             e.preventDefault();
