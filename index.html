@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gender Reveal Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>👶 Catch the Babies! 👶</h1>
+            <div class="game-stats">
+                <p id="score">Score: 0</p>
+                <p id="timer">⏱️ 1:00</p>
+            </div>
+        </div>
+        <div id="game-area">
+            <div id="basket">🧺</div>
+            <div id="babies-container"></div>
+        </div>
+        <div id="reveal-container" class="hidden">
+            <p id="final-score"></p>
+            <h2 id="gender-reveal">We're having a <span id="baby-gender">baby</span>!</h2>
+            <button id="play-again">🎮 Play Again</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
