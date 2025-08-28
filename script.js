@@ -39,15 +39,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowRight') isMovingRight = false;
     });
     
-    // Touch controls for mobile
+    // Enhanced touch controls for mobile
     let touchStartX = 0;
+    let touchStartTime = 0;
+    let touchMoved = false;
     
+    // Touch start handler
     gameArea.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        const touchX = e.touches[0].clientX;
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartTime = Date.now();
+        touchMoved = false;
+        
+        // Get basket position
         const basketRect = basket.getBoundingClientRect();
+        const touchX = touch.clientX;
         const basketCenter = basketRect.left + basketRect.width / 2;
         
+        // Set movement based on touch position relative to basket
         if (touchX < basketCenter) {
             isMovingLeft = true;
             isMovingRight = false;
@@ -55,16 +64,78 @@ document.addEventListener('DOMContentLoaded', () => {
             isMovingRight = true;
             isMovingLeft = false;
         }
-    });
-    
-    gameArea.addEventListener('touchmove', (e) => {
+        
         e.preventDefault();
-    });
+    }, { passive: false });
     
+    // Touch move handler for smoother control
+    gameArea.addEventListener('touchmove', (e) => {
+        if (!touchMoved && e.touches.length > 0) {
+            const touch = e.touches[0];
+            const touchX = touch.clientX;
+            const moveX = touchX - touchStartX;
+            
+            // Only register as a move if finger has moved significantly
+            if (Math.abs(moveX) > 10) {
+                touchMoved = true;
+                
+                // Update basket position directly based on touch position
+                const gameAreaRect = gameArea.getBoundingClientRect();
+                const basketWidth = basket.offsetWidth;
+                let newPosition = ((touchX - gameAreaRect.left - basketWidth/2) / (gameAreaRect.width - basketWidth)) * 100;
+                
+                // Keep basket within bounds
+                newPosition = Math.max(0, Math.min(100, newPosition));
+                basketPosition = newPosition;
+                basket.style.left = `${basketPosition}%`;
+            }
+        }
+        e.preventDefault();
+    }, { passive: false });
+    
+    // Touch end handler
     gameArea.addEventListener('touchend', () => {
         isMovingLeft = false;
         isMovingRight = false;
+        touchMoved = false;
     });
+    
+    // Prevent scrolling on touch devices
+    document.addEventListener('touchmove', (e) => {
+        if (isGameActive) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Add touch controls hint for mobile users
+    if ('ontouchstart' in window || navigator.maxTouchPoints) {
+        const touchHint = document.createElement('div');
+        touchHint.textContent = '← Touch and drag to move →';
+        touchHint.style.cssText = `
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            z-index: 100;
+            pointer-events: none;
+            animation: fadeOut 3s forwards 3s;
+        `;
+        gameArea.appendChild(touchHint);
+        
+        // Add fade out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                to { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
     
     // Randomly decide the gender (50/50 chance)
     const isBoy = Math.random() >= 0.5;
@@ -605,8 +676,11 @@ document.addEventListener('DOMContentLoaded', () => {
             transform: translateX(-50%);
             font-size: 3rem;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.1s ease-out;
             z-index: 100;
+            touch-action: none; /* Prevent default touch behaviors */
+            user-select: none; /* Prevent text selection */
+            -webkit-user-drag: none; /* Prevent dragging on WebKit browsers */
         }
         
         .falling-item {
