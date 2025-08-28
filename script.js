@@ -555,12 +555,15 @@ document.addEventListener('DOMContentLoaded', () => {
             messageContent.style.maxWidth = '800px';
             messageContent.innerHTML = `
                 <h1 style="color: #e74c3c; font-size: 3em; margin-bottom: 20px;">⏰ TIME'S UP! ⏰</h1>
-                <div style="font-size: 2.5em; margin: 40px 0; line-height: 1.4;">
+                <div style="font-size: 2.5em; margin: 20px 0; line-height: 1.4;">
                     <span style="color: #e91e63">Anisha</span> & <span style="color: #2196f3">Francis</span> are having a 
                     <span style="color: #e74c3c; font-weight: bold; font-size: 1.2em;">BABY</span>! 👶
                 </div>
-                <div style="font-size: 1.8em; margin: 30px 0; color: #d32f2f;">
+                <div style="font-size: 1.8em; margin: 20px 0; color: #d32f2f;">
                     Final Score: ${score}
+                </div>
+                <div style="font-size: 1.4em; margin: 30px 0; color: #5d4037; background: #fff3e0; padding: 15px; border-radius: 10px; max-width: 600px; line-height: 1.5;">
+                    💡 <strong>Hint:</strong> Catch 3 babies to find out if it's a boy or girl!
                 </div>
                 <button onclick="window.location.reload()" style="
                     background: #e74c3c;
