@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isMovingRight = false;
     
     // Game settings
-    const BABIES_TO_WIN = 3;
+    const WINNING_SCORE = 100;
     const ITEM_TYPES = {
         BABY: 'baby',
         POOP: 'poop',
@@ -189,15 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (itemType === ITEM_TYPES.BABY) {
             caughtBabies++;
             score += 10;
-            scoreElement.textContent = `Score: ${score} | Babies: ${caughtBabies}/${BABIES_TO_WIN}`;
+            scoreElement.textContent = `Score: ${score}/100`;
             
-            if (caughtBabies >= BABIES_TO_WIN) {
+            if (score >= WINNING_SCORE) {
                 endGame(true);
             }
         } else if (itemType === ITEM_TYPES.POOP || itemType === ITEM_TYPES.BARF) {
             // Penalty for catching poop or barf
             score = Math.max(0, score - 5);
-            scoreElement.textContent = `Score: ${score} | Babies: ${caughtBabies}/${BABIES_TO_WIN}`;
+            scoreElement.textContent = `Score: ${score}/100`;
         }
         
         // Create catch effect
@@ -435,10 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(spawnInterval);
         
         if (isWin) {
-            // Calculate final score based on time left
-            const timeBonus = Math.floor(timeLeft * 5);
-            score += timeBonus;
-            
             // Create fullscreen overlay for the win message
             const fullscreenOverlay = document.createElement('div');
             fullscreenOverlay.id = 'fullscreen-win';
@@ -482,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span style="color: #2196f3; font-weight: bold; font-size: 1.2em;">BOY</span>! 👶
                 </div>
                 <div style="font-size: 1.5em; margin: 30px 0; color: #555;">
-                    Final Score: ${score} <span style="color: #4CAF50">(+${timeBonus} time bonus!)</span>
+                    Final Score: ${score}
                 </div>
                 <button onclick="window.location.reload()" style="
                     background: #4CAF50;
@@ -557,19 +553,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     Final Score: ${score}
                 </div>
                 <div style="font-size: 1.4em; margin: 30px 0; color: #5d4037; background: #fff3e0; padding: 15px; border-radius: 10px; max-width: 600px; line-height: 1.5;">
-                    💡 <strong>Hint:</strong> Catch 3 babies to find out if it's a boy or girl!
+                    💡 <strong>Hint:</strong> Score 100 points to find out if it's a boy or girl!
                 </div>
-                <button onclick="window.location.reload()" style="
-                    background: #e74c3c;
-                    color: white;
-                    border: none;
-                    padding: 15px 40px;
-                    font-size: 1.2em;
-                    border-radius: 50px;
-                    cursor: pointer;
-                    margin-top: 20px;
-                    transition: transform 0.2s, background 0.2s;
-                ">
+                <button onclick="window.location.reload()" class="btn primary large" style="margin-top: 2rem;">
                     Try Again
                 </button>
             `;
@@ -594,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
         basketPosition = 50;
         
         // Update displays
-        scoreElement.textContent = `Score: ${score} | Babies: 0/${BABIES_TO_WIN}`;
+        scoreElement.textContent = `Score: ${score}/100`;
         updateTimer();
         
         // Clear existing elements

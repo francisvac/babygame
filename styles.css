@@ -1,31 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Minimalist color palette */
+    --primary: #4A90E2;
+    --primary-light: #E3F2FD;
+    --success: #4CAF50;
+    --error: #F44336;
+    --warning: #FFC107;
+    
+    /* Neutral colors */
+    --white: #FFFFFF;
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #EEEEEE;
+    --gray-300: #E0E0E0;
+    --gray-400: #BDBDBD;
+    --gray-500: #9E9E9E;
+    --gray-600: #757575;
+    --gray-700: #616161;
+    --gray-800: #424242;
+    --gray-900: #212121;
+    --black: #000000;
+    
+    /* Background colors */
+    --system-bg: var(--white);
+    --secondary-bg: var(--gray-50);
+    --tertiary-bg: var(--gray-100);
+    
+    /* Text colors */
+    --primary-text: var(--gray-900);
+    --secondary-text: var(--gray-600);
+    --tertiary-text: var(--gray-400);
+    --on-primary: var(--white);
+    
+    /* UI Elements */
+    --border-color: var(--gray-200);
+    --separator-color: var(--gray-100);
+    --fill-color: var(--gray-100);
+    
+    /* Gradients */
+    --primary-gradient: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+    --success-gradient: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+    --danger-gradient: linear-gradient(135deg, #FF3B30 0%, #FF453A 100%);
+    
+    /* No shadows for flat design */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    
+    /* Border radius */
+    --border-radius-sm: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Legacy variables for compatibility */
+    --primary-color: var(--ios-blue);
+    --secondary-color: var(--ios-pink);
+    --accent-color: var(--ios-light-blue);
+    --text-color: var(--primary-text);
+    --light-bg: var(--system-bg);
+    --card-bg: var(--secondary-bg);
+    --shadow: var(--shadow-md);
+    --border-radius: var(--border-radius-md);
+    --transition: var(--transition-normal);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
 }
 
 body {
-    background-color: #f0f8ff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: var(--system-bg);
+    color: var(--primary-text);
+    line-height: 1.5;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .game-container {
     text-align: center;
-    background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
-    width: 95%;
-    margin: 1rem auto;
+    background: var(--system-bg);
+    padding: 2rem 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
     position: relative;
-    overflow: hidden;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .game-container::before {
@@ -39,27 +122,34 @@ body {
 }
 
 .game-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 h1 {
-    color: #2c3e50;
-    margin: 0 0 1rem 0;
-    font-size: 2.2rem;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    color: var(--primary-text);
+    margin: 0 0 1.5rem 0;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 .game-stats {
     display: flex;
-    justify-content: space-between;
-    max-width: 500px;
-    margin: 0 auto;
-    background: rgba(255,255,255,0.8);
-    padding: 0.8rem 1.5rem;
-    border-radius: 50px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    justify-content: center;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+    color: var(--secondary-text);
+    font-weight: 500;
+}
+
+.game-stats p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 #score, #timer {
@@ -124,6 +214,118 @@ h1 {
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+.falling-item {
+    position: absolute;
+    font-size: 2.2rem;
+    width: 44px;
+    height: 44px;
+    text-align: center;
+    line-height: 44px;
+    user-select: none;
+    will-change: transform;
+    transition: transform 0.2s ease-out;
+    z-index: 10;
+}
+
+/* iOS-style button */
+/* Buttons */
+button, .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    height: 48px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background: var(--primary);
+    color: var(--on-primary);
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+button:hover, .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:active, .btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+button:after, .btn:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+button:active:after, .btn:active:after {
+    opacity: 1;
+}
+
+button.primary, .btn.primary {
+    background: var(--ios-blue);
+    color: white;
+}
+
+button.danger, .btn.danger {
+    background: var(--ios-red);
+    color: white;
+}
+
+button.success, .btn.success {
+    background: var(--ios-green);
+    color: white;
+}
+
+button.secondary, .btn.secondary {
+    background: var(--tertiary-bg);
+    color: var(--ios-blue);
+    border: 1px solid var(--border-color);
+}
+
+button.large, .btn.large {
+    height: 52px;
+    font-size: 1.1rem;
+    padding: 0 28px;
+    border-radius: 12px;
+}
+
+/* Basket styling */
+#game-area {
+    position: relative;
+    width: 100%;
+    height: 65vh;
+    max-height: 600px;
+    margin: 2rem auto;
+    overflow: hidden;
+    background: #f7f7f7;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    touch-action: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+#basket:active {
+    transform: translateX(-50%) scale(0.95);
+}
+
 #reveal-container {
     margin-top: 2rem;
     padding: 2.5rem;
@@ -158,11 +360,13 @@ h1 {
     margin: 1.5rem 0;
     animation: bounce 0.8s infinite alternate;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    background: linear-gradient(45deg, var(--ios-pink), var(--ios-light-blue));
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% 200%;
     animation: gradient 3s ease infinite;
+    display: inline-block;
 }
 
 @keyframes bounce {
@@ -204,11 +408,45 @@ h1 {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    html {
+        font-size: 16px; /* Slightly larger base font for better readability */
+    }
+    
     .game-container {
         padding: 1rem;
-        width: 100%;
-        margin: 0;
+        max-width: 100%;
         border-radius: 0;
+    }
+    
+    /* iOS-style safe area insets */
+    @supports (padding: max(0px)) {
+        .game-container {
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+            padding-top: max(1rem, env(safe-area-inset-top));
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+    }
+    
+    .game-header h1 {
+        font-size: 1.8rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .game-stats {
+        padding: 0.5rem 1rem !important;
+    }
+    
+    #basket {
+        font-size: 2.5rem !important;
+        bottom: 15px !important;
+    }
+    
+    .falling-item {
+        font-size: 1.8rem !important;
+        width: 36px !important;
+        height: 36px !important;
+        line-height: 36px !important;
     }
     
     h1 {
@@ -303,6 +541,11 @@ button::after {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}
+
+.hidden {
+    display: none !important;
+}
 }
 
 .hidden {
