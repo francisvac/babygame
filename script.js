@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Final Score: ${score}
                 </div>
                 <div style="font-size: 1.4em; margin: 30px 0; color: #5d4037; background: #fff3e0; padding: 15px; border-radius: 10px; max-width: 600px; line-height: 1.5;">
-                    💡 <strong>Hint:</strong> Score 100 points to find out if it's a boy or girl!
+                    💡 <strong>Hint:</strong> Score 100 points to find out if the baby is a boy or girl!
                 </div>
                 <button onclick="window.location.reload()" class="btn primary large" style="margin-top: 2rem;">
                     Try Again
