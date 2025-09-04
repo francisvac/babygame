@@ -210,21 +210,144 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
     
+    function createPoopEffect() {
+        const poopOverlay = document.createElement('div');
+        poopOverlay.style.position = 'fixed';
+        poopOverlay.style.top = '0';
+        poopOverlay.style.left = '0';
+        poopOverlay.style.width = '100%';
+        poopOverlay.style.height = '100%';
+        poopOverlay.style.backgroundColor = '#5c3a21';
+        poopOverlay.style.opacity = '0.8';
+        poopOverlay.style.zIndex = '9999';
+        poopOverlay.style.display = 'flex';
+        poopOverlay.style.justifyContent = 'center';
+        poopOverlay.style.alignItems = 'center';
+        poopOverlay.style.fontSize = '3rem';
+        poopOverlay.style.color = 'white';
+        poopOverlay.style.pointerEvents = 'none';
+        poopOverlay.textContent = '💩';
+        
+        // Add poop emojis randomly on the screen
+        for (let i = 0; i < 20; i++) {
+            const poop = document.createElement('div');
+            poop.textContent = '💩';
+            poop.style.position = 'absolute';
+            poop.style.fontSize = `${Math.random() * 3 + 1}rem`;
+            poop.style.top = `${Math.random() * 100}%`;
+            poop.style.left = `${Math.random() * 100}%`;
+            poop.style.transform = `rotate(${Math.random() * 360}deg)`;
+            poop.style.opacity = '0.8';
+            poopOverlay.appendChild(poop);
+        }
+        
+        document.body.appendChild(poopOverlay);
+        
+        // Remove the effect after 1 second
+        setTimeout(() => {
+            poopOverlay.style.transition = 'opacity 0.5s';
+            poopOverlay.style.opacity = '0';
+            
+            // Remove the element after fade out
+            setTimeout(() => {
+                if (poopOverlay.parentNode) {
+                    poopOverlay.parentNode.removeChild(poopOverlay);
+                }
+            }, 500);
+        }, 1000);
+    }
+    
+    function createVomitEffect() {
+        const vomitOverlay = document.createElement('div');
+        vomitOverlay.style.position = 'fixed';
+        vomitOverlay.style.top = '0';
+        vomitOverlay.style.left = '0';
+        vomitOverlay.style.width = '100%';
+        vomitOverlay.style.height = '100%';
+        vomitOverlay.style.background = 'linear-gradient(135deg, #e6f7b7 0%, #b7e8f7 50%, #f7d0b7 100%)';
+        vomitOverlay.style.opacity = '0.9';
+        vomitOverlay.style.zIndex = '9999';
+        vomitOverlay.style.display = 'flex';
+        vomitOverlay.style.justifyContent = 'center';
+        vomitOverlay.style.alignItems = 'center';
+        vomitOverlay.style.fontSize = '4rem';
+        vomitOverlay.style.color = '#8B4513';
+        vomitOverlay.style.pointerEvents = 'none';
+        vomitOverlay.style.overflow = 'hidden';
+        
+        // Add animated vomit emojis
+        for (let i = 0; i < 15; i++) {
+            const vomit = document.createElement('div');
+            vomit.textContent = '🤮';
+            vomit.style.position = 'absolute';
+            vomit.style.fontSize = `${Math.random() * 4 + 2}rem`;
+            vomit.style.top = `${Math.random() * 100}%`;
+            vomit.style.left = `${Math.random() * 100}%`;
+            vomit.style.transform = `scale(${Math.random() * 0.5 + 0.5}) rotate(${Math.random() * 360}deg)`;
+            vomit.style.animation = `bounce ${Math.random() * 2 + 1}s infinite`;
+            vomit.style.opacity = '0.9';
+            vomitOverlay.appendChild(vomit);
+        }
+        
+        // Add keyframes for bounce animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0) rotate(0deg); }
+                50% { transform: translateY(-20px) rotate(10deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(vomitOverlay);
+        
+        // Remove the effect after 1.5 seconds
+        setTimeout(() => {
+            vomitOverlay.style.transition = 'opacity 0.8s';
+            vomitOverlay.style.opacity = '0';
+            
+            // Remove the element after fade out
+            setTimeout(() => {
+                if (vomitOverlay.parentNode) {
+                    vomitOverlay.parentNode.removeChild(vomitOverlay);
+                }
+                if (style.parentNode) {
+                    style.parentNode.removeChild(style);
+                }
+            }, 800);
+        }, 1500);
+    }
+    
     function handleItemCatch(item) {
         const itemType = item.dataset.type;
         
         if (itemType === ITEM_TYPES.BABY) {
             caughtBabies++;
             score += 10;
-            scoreElement.textContent = `Score: ${score}/100`;
+            scoreElement.textContent = `Score: ${score}`;
             
+            // Check for win condition
             if (score >= WINNING_SCORE) {
                 endGame(true);
             }
-        } else if (itemType === ITEM_TYPES.POOP || itemType === ITEM_TYPES.BARF) {
-            // Penalty for catching poop or barf
+        } else if (itemType === ITEM_TYPES.POOP) {
             score = Math.max(0, score - 5);
-            scoreElement.textContent = `Score: ${score}/100`;
+            scoreElement.textContent = `Score: ${score}`;
+            createPoopEffect(); // Add poop screen effect
+        } else if (itemType === ITEM_TYPES.BARF) {
+            // Barf makes the basket wider for a short time and triggers vomit effect
+            const originalWidth = basketWidth;
+            basketWidth = 120; // Make basket wider
+            basket.style.width = `${basketWidth}px`;
+            
+            // Create vomit screen effect
+            createVomitEffect();
+            
+            // Reset basket width after delay
+            setTimeout(() => {
+                basketWidth = originalWidth;
+                basket.style.width = `${basketWidth}px`;
+            }, 3000);
         }
         
         // Create catch effect
