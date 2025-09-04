@@ -16,17 +16,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let isGameActive = true;
     let basketPosition = 50; // percentage
     let basketWidth = 80; // pixels
-    let basketSpeed = 2; // pixels per frame
+    let basketSpeed = 3; // Increased from 2 to 3 for faster movement
     let isMovingLeft = false;
     let isMovingRight = false;
     
     // Game settings
     const WINNING_SCORE = 100;
+    const MISSED_BABY_PENALTY = 5; // Points to deduct for each missed baby
     const ITEM_TYPES = {
         BABY: 'baby',
         POOP: 'poop',
         BARF: 'barf'
     };
+    
+    // Speed settings
+    const GAME_SPEED_MULTIPLIER = 1.5; // Increase game speed by 50%
+    const BASE_FALL_SPEED = 2; // Base falling speed
     
     // Controls
     document.addEventListener('keydown', (e) => {
@@ -138,12 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateGame() {
         if (!isGameActive) return;
         
-        // Move basket
+        // Move basket with increased speed
         if (isMovingLeft) {
-            basketPosition = Math.max(0, basketPosition - basketSpeed);
+            basketPosition = Math.max(0, basketPosition - basketSpeed * 1.5); // Faster movement
         }
         if (isMovingRight) {
-            basketPosition = Math.min(100 - (basketWidth / gameArea.offsetWidth * 100), basketPosition + basketSpeed);
+            basketPosition = Math.min(100 - (basketWidth / gameArea.offsetWidth * 100), basketPosition + basketSpeed * 1.5); // Faster movement
         }
         
         basket.style.left = `${basketPosition}%`;
@@ -156,14 +161,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const newTop = top + speed;
             item.style.top = `${newTop}px`;
             
-            // Check if caught by basket
+            // Check if caught or missed
             if (isColliding(item, basket)) {
                 handleItemCatch(item);
-                return;
-            }
-            
-            // Remove if off screen
-            if (newTop > gameArea.offsetHeight) {
+            } else if (newTop > gameArea.offsetHeight) {
+                // Item missed the basket
+                if (item.dataset.type === ITEM_TYPES.BABY) {
+                    // Penalty for missing a baby
+                    score = Math.max(0, score - MISSED_BABY_PENALTY);
+                    scoreElement.textContent = `Score: ${score}`;
+                    
+                    // Show penalty notification
+                    const penalty = document.createElement('div');
+                    penalty.className = 'penalty';
+                    penalty.textContent = `-${MISSED_BABY_PENALTY}`;
+                    penalty.style.position = 'absolute';
+                    penalty.style.left = item.style.left;
+                    penalty.style.top = `${gameArea.offsetHeight}px`;
+                    penalty.style.color = 'red';
+                    penalty.style.fontWeight = 'bold';
+                    penalty.style.fontSize = '1.5rem';
+                    penalty.style.animation = 'float-up 1s forwards';
+                    gameArea.appendChild(penalty);
+                    
+                    // Remove penalty notification after animation
+                    setTimeout(() => {
+                        if (penalty.parentNode) {
+                            penalty.remove();
+                        }
+                    }, 1000);
+                }
                 item.remove();
             }
         });
@@ -229,15 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rand < 0.6) { // 60% chance for baby
             itemType = ITEM_TYPES.BABY;
             emoji = '👶';
-            speed = 2 + Math.random() * 2;
+            speed = (2 + Math.random() * 2) * GAME_SPEED_MULTIPLIER; // Apply speed multiplier
         } else if (rand < 0.8) { // 20% chance for poop
             itemType = ITEM_TYPES.POOP;
             emoji = '💩';
-            speed = 3 + Math.random() * 2;
+            speed = (3 + Math.random() * 2) * GAME_SPEED_MULTIPLIER; // Apply speed multiplier
         } else { // 20% chance for barf
             itemType = ITEM_TYPES.BARF;
             emoji = '🤮';
-            speed = 3 + Math.random() * 2;
+            speed = (3 + Math.random() * 2) * GAME_SPEED_MULTIPLIER; // Apply speed multiplier
         }
         
         item.dataset.type = itemType;
