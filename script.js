@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // Speed settings
-    const GAME_SPEED_MULTIPLIER = 1.5; // Increase game speed by 50%
+    const GAME_SPEED_MULTIPLIER = 2.0; // Increase game speed by 50%
     const BASE_FALL_SPEED = 2; // Base falling speed
     
     // Controls
