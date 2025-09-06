@@ -369,40 +369,77 @@ document.addEventListener('DOMContentLoaded', () => {
     function spawnItem() {
         if (!isGameActive) return;
         
-        const item = document.createElement('div');
-        item.className = 'falling-item';
+        // Spawn between 1-3 items at once
+        const itemCount = Math.floor(Math.random() * 3) + 1;
         
-        // Randomly decide item type
-        const rand = Math.random();
-        let itemType, emoji, speed;
-        
-        if (rand < 0.6) { // 60% chance for baby
-            itemType = ITEM_TYPES.BABY;
-            emoji = '👶';
-            speed = (2 + Math.random() * 2) * GAME_SPEED_MULTIPLIER; // Apply speed multiplier
-        } else if (rand < 0.8) { // 20% chance for poop
-            itemType = ITEM_TYPES.POOP;
-            emoji = '💩';
-            speed = (3 + Math.random() * 2) * GAME_SPEED_MULTIPLIER; // Apply speed multiplier
-        } else { // 20% chance for barf
-            itemType = ITEM_TYPES.BARF;
-            emoji = '🤮';
-            speed = (3 + Math.random() * 2) * GAME_SPEED_MULTIPLIER; // Apply speed multiplier
+        for (let i = 0; i < itemCount; i++) {
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            
+            // Randomly decide item type
+            const rand = Math.random();
+            let itemType, emoji, speed;
+            
+            if (rand < 0.5) { // 50% chance for baby
+                itemType = ITEM_TYPES.BABY;
+                emoji = '👶';
+                speed = (2 + Math.random() * 2) * GAME_SPEED_MULTIPLIER;
+            } else if (rand < 0.8) { // 30% chance for poop
+                itemType = ITEM_TYPES.POOP;
+                emoji = '💩';
+                speed = (3 + Math.random() * 2) * GAME_SPEED_MULTIPLIER;
+            } else { // 20% chance for barf
+                itemType = ITEM_TYPES.BARF;
+                emoji = '🤮';
+                speed = (3.5 + Math.random() * 2.5) * GAME_SPEED_MULTIPLIER;
+            }
+            
+            item.dataset.type = itemType;
+            item.dataset.speed = speed;
+            item.textContent = emoji;
+            
+            // Random position at top of screen with spacing
+            const itemWidth = 40; // Approximate width of items
+            const minSpacing = itemWidth * 1.5;
+            let left, validPosition;
+            let attempts = 0;
+            
+            // Try to find a position that's not too close to other items
+            do {
+                left = Math.random() * (gameArea.offsetWidth - itemWidth);
+                validPosition = true;
+                
+                // Check distance from other items
+                const items = document.querySelectorAll('.falling-item');
+                for (const otherItem of items) {
+                    const otherLeft = parseFloat(otherItem.style.left) || 0;
+                    if (Math.abs(left - otherLeft) < minSpacing) {
+                        validPosition = false;
+                        break;
+                    }
+                }
+                
+                attempts++;
+                if (attempts > 20) break; // Prevent infinite loop
+            } while (!validPosition && items.length > 0);
+            
+            item.style.left = `${Math.max(0, Math.min(gameArea.offsetWidth - itemWidth, left))}px`;
+            item.style.top = `${-50 - (Math.random() * 100)}px`; // Start slightly above the screen with variation
+            
+            // Add slight delay between items
+            item.style.transitionDelay = `${i * 100}ms`;
+            
+            // Add rotation animation with random direction and speed
+            const rotationSpeed = 2 + Math.random() * 4; // 2-6 seconds per rotation
+            const rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random direction
+            item.style.animation = `spin ${rotationSpeed}s linear ${rotationDirection > 0 ? 'normal' : 'reverse'} infinite`;
+            
+            // Slight horizontal movement for more dynamic feel
+            item.style.setProperty('--sway-distance', `${5 + Math.random() * 10}px`); 
+            item.style.animation = `sway ${3 + Math.random() * 4}s ease-in-out infinite alternate, ${item.style.animation}`;
+            
+            babiesContainer.appendChild(item);
         }
-        
-        item.dataset.type = itemType;
-        item.dataset.speed = speed;
-        item.textContent = emoji;
-        
-        // Random position at top of screen
-        const left = Math.random() * (gameArea.offsetWidth - 40);
-        item.style.left = `${left}px`;
-        item.style.top = '-40px';
-        
-        // Add rotation animation
-        item.style.animation = `spin ${3 + Math.random() * 3}s linear infinite`;
-        
-        babiesContainer.appendChild(item);
     }
     
     // Update timer display
@@ -760,8 +797,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 1000);
         
-        // Item spawner
-        spawnInterval = setInterval(spawnItem, 1000);
+        // Item spawner - slightly faster to compensate for multiple items
+        spawnInterval = setInterval(spawnItem, 1200);
         
         // Start game loop
         requestAnimationFrame(updateGame);
@@ -776,6 +813,11 @@ document.addEventListener('DOMContentLoaded', () => {
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes sway {
+            from { transform: translateX(calc(-1 * var(--sway-distance, 0))); }
+            to { transform: translateX(var(--sway-distance, 0)); }
         }
         
         @keyframes float-up {
